@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+def report_error(str, out)
+  $stderr.write("\nERROR: " + str + "\n")  
+  if out and out.length > 0
+    $stderr.write("OUTPUT: \n\n")
+    lines = out.strip.split(/\r?\n/)
+    reason = lines.map{|l| "\t" + l}.join("\n")
+    $stderr.write(reason + "\n\n")
+  else
+    $stderr.write("\n")
+  end
+  exit(1)
+end
+
+def get_instances
+  puts "Fetching running instances..."
+  out = `elb-describe-instance-health gekko 2>&1`
+  instances = out.scan(/INSTANCE_ID\s+(\S+)/).map{|x| x[0]}
+  report_error("Cannot find instances", out) unless instances.length > 0
+  instances
+end
+
+def get_instance_info(instance_id)
+  out = `ec2-describe-instances #{instance_id} 2>&1`
+  match = out.scan(/\s*INSTANCE.*\s+(ec2\S+).*running/)
+  if match.length == 0 || match[0].length == 0
+    report_error("Cannot get instance info", out)
+  else
+    value = match[0][0].strip
+    puts "Detected: " + value
+    value
+  end
+end
+
+def get_hosts
+  get_instances.map do |instance_id|
+    get_instance_info(instance_id)
+  end
+end
+
+if not ENV["GEKKO_PEM_PATH"]
+  report_error("Environment value not set for GEKKO_PEM_PATH (the SSH private key used for deployment)", nil)
+end
+
+all_hosts = get_hosts.join(",")
+
+Dir.chdir(File.join(File.dirname(__FILE__), "..", "..", "project", "deployment"))
+command = "fab -u ubuntu -i \"#{ENV['GEKKO_PEM_PATH']}\" -H #{all_hosts} provision"
+
+puts "Executing: "
+puts "\t" + command
+puts
+
+exec command
+

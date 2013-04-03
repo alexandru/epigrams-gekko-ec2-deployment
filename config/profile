@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export GEKKO_AWS_ACCESSKEY="AKIAIZ6ZLBMBKB6IRH2A"
+export GEKKO_AWS_BUCKETNAME="epigrams-logs"
+export GEKKO_AWS_SECRETKEY="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"
+export GEKKO_MEMCACHE_ADDRESSES="godzilla-lite.v92djk.0001.use1.cache.amazonaws.com:11211 godzilla-lite.v92djk.0002.use1.cache.amazonaws.com:11211 godzilla-lite.v92djk.0003.use1.cache.amazonaws.com:11211"
+export GEKKO_MYSQL_PASSWORD="lb5Fou7GfR"
+export GEKKO_MYSQL_URL="jdbc:mysql://godzilla.cknwtnd1bfge.us-east-1.rds.amazonaws.com:3306/elf"
+export GEKKO_MYSQL_USER="elf"
+export HOSTEDGRAPHITE_APIKEY="b7e306fc-d538-4e2f-9f7e-3878834904ce"
+export JAVA_OPTS="-Xms600m -Xmx1200m -XX:+UseConcMarkSweepGC -XX:NewRatio=1 -XX:MaxGCPauseMillis=600 -server"

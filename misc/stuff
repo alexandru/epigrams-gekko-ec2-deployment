@@ -1,0 +1,29 @@
+i-f1ea9793
+
+fab -P -z 10 -n 10 -u ubuntu -i /home/alex/.ssh/gekko.pem -H ec2-54-234-114-155.compute-1.amazonaws.com provision
+
+ec2-create-image --region us-east-1 i-f1ea9793 --name gekko
+
+ec2-create-tags ami-e6b1d48f --tag Name=gekko
+
+
+elb-create-lb gekko --headers --listener "lb-port=80,instance-port=9000,protocol=http" --availability-zones us-east-1c
+
+elb-configure-healthcheck gekko --headers --target "HTTP:9000/ping" --interval 60 --timeout 3 --unhealthy-threshold 4 --healthy-threshold 2
+
+as-create-launch-config gekko-20130403-180447 --image-id ami-98badff1 --instance-type c1.medium --group Gekko
+
+### as-create-auto-scaling-group gekko-production --availability-zones us-east-1c,us-east-1d --launch-configuration gekko-20130403-143908 --min-size 8 --max-size 15 --desired-capacity 8 --load-balancers gekko  --tag  "k=Name,v=gekko-production-instance,p=true" --health-check-type ELB --grace-period 120
+as-create-auto-scaling-group gekko-production --availability-zones us-east-1c --launch-configuration gekko-20130403-180447 --min-size 1 --max-size 15 --desired-capacity 8 --load-balancers gekko  --tag  "k=Name,v=gekko-production-instance,p=true"
+
+as-put-scaling-policy GekkoScaleUpPolicy --auto-scaling-group gekko-production --adjustment=1 --type ChangeInCapacity --cooldown 120
+
+Output of the above:
+arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:9b1bf7ff-26c8-45f9-8990-68c1034ac6e1:autoScalingGroupName/gekko-production:policyName/GekkoScaleUpPolicy
+
+as-put-scaling-policy GekkoScaleDownPolicy --auto-scaling-group gekko-production --adjustment=-1 --type ChangeInCapacity --cooldown 300
+
+Output: arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:7ba6ea3d-c1d5-4b65-810f-ee963f9b5635:autoScalingGroupName/gekko-production:policyName/GekkoScaleDownPolicy
+
+## mon-put-metric-alarm GekkoProductionHighLatency --comparison-operator GreaterThanThreshold --evaluation-periods 1 --metric-name Latency --namespace "AWS/ELB" --period 120 --statistic Average --threshold 0.5 --alarm-actions arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:a81a8a82-b1f7-4cd2-b99d-ff6d501e6e55:autoScalingGroupName/gekko-production:policyName/GekkoScaleUpPolicy --dimensions "AutoScalingGroupName=gekko-production"
+## mon-put-metric-alarm GekkoProductionLowLatency --comparison-operator LessThanThreshold --evaluation-periods 1 --metric-name Latency --namespace "AWS/ELB" --period 360 --statistic Average --threshold 0.3 --alarm-actions arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:f68f0f81-c96c-4724-887f-7b60fc3fa7a3:autoScalingGroupName/gekko-production:policyName/GekkoScaleDownPolicy --dimensions "AutoScalingGroupName=gekko-production"

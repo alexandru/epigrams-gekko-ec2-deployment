@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+HOME_DIR  = File.absolute_path(File.dirname(__FILE__))
+DIRECTORY = File.join(HOME_DIR, "gekko")
+
+if File.exist?(DIRECTORY)
+  Dir.chdir(DIRECTORY)
+  system("git pull")
+else  
+  Dir.chdir(HOME_DIR)
+  system("git clone git@github.com:epigrams/gekko.git")
+  Dir.chdir(DIRECTORY)
+end
+
+system('sbt ";compile;stage"')
+exec("rsync -rcv --cvs-exclude ./ ../gekko-running/")
