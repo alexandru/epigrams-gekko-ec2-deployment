@@ -1,3 +1,4 @@
 #!/bin/sh
 
+sudo chmod ugo+rwx /tmp/
 exec sudo -u gekko -i /home/gekko/gekko-running/bin/server

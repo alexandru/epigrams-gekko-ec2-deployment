@@ -83,6 +83,14 @@ def list_available_images
   Hash[*list]
 end
 
+def list_available_scaling_groups
+  out = `as-describe-auto-scaling-groups`
+  raise Exception.new("ERROR: " + out) unless $?.exitstatus == 0
+
+  matches = out.scan(/AUTO[-]SCALING[-]GROUP\s+(gekko[-]\d{8}[-]\d{6})\s+/)
+  matches.map{|x| x[0]}
+end
+
 def check_launch_configuration(name)
   out = `as-describe-launch-configs #{name} 2>&1`
   if out !~ /LAUNCH[-]CONFIG\s+gekko-\d{8}-\d{8}/
@@ -90,4 +98,24 @@ def check_launch_configuration(name)
   else
     false
   end
+end
+
+def update_scaling_group(name, min, max, capacity)
+  command = "as-update-auto-scaling-group #{name} --min-size #{min} --max-size #{max} --desired-capacity #{capacity}"
+  puts "\n" + command
+  raise Exception.new("Something wrong happened") unless system(command)
+end
+
+def get_scaling_group_instances(name)
+  out = `as-describe-auto-scaling-groups #{name} 2>&1`
+  raise Exception.new(out) unless $?.exitstatus == 0
+
+  match = out.scan(/INSTANCE\s+(i[-]\w+)/)
+  ids = match.map{|x| x[0]}
+
+  out = `ec2-describe-instances #{ids.join(" ")} --show-empty-fields 2>&1`
+  raise Exception.new(out) unless $?.exitstatus == 0
+  
+  match = out.scan(/INSTANCE\s+(i[-]\w+)\s+\S+\s+(ec2\S+[.com])\s+\S+\s+(\S+)/m)
+  Hash[*match.map{|x| [x[0], {:host => x[1], :status => x[2]}]}.flatten]
 end
