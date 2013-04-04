@@ -1,4 +1,13 @@
 require 'date'
+require_relative "../config"
+
+def report_error(parser, msg)  
+  $stderr.puts("\nERROR: #{msg}\n\n")
+  $stderr.puts(parser)
+  $stderr.puts
+  exit(1)
+end
+
 
 def get_keypairs
   out = `ec2-describe-keypairs 2>&1`
@@ -11,7 +20,7 @@ def create_instances(keypair, nr, tag_name, ami_id=nil)
 
   ids = []
   (0...nr).each do |i|
-    out = `ec2-run-instances #{ami_id} -k #{keypair} --monitor -n 1 -t c1.medium -g gekko --instance-initiated-shutdown-behavior stop 2>&1`
+    out = `ec2-run-instances #{ami_id} -k #{keypair} --monitor -n 1 -t #{Gekko::Config::INSTANCE_TYPE} -g #{Gekko::Config::GROUP} --instance-initiated-shutdown-behavior stop 2>&1`
     match = out.scan(/INSTANCE\s+(i[-]\S+)/)
     raise Exception.new("Could not create instance: #{out}") unless match && match.length == 1
     `ec2-create-tags #{match[0][0]} --tag Name=#{tag_name}`
@@ -46,7 +55,7 @@ def create_ami(instance_id, name_prefix)
 end
 
 def create_launch_config(ami_id, ami_name)
-  system("as-create-launch-config #{ami_name} --image-id #{ami_id} --instance-type c1.medium --group Gekko")
+  system("as-create-launch-config #{ami_name} --image-id #{ami_id} --instance-type #{Gekko::Config::INSTANCE_TYPE} --group #{Gekko::Config::GROUP}")
 end
 
 def wait_available_ami(ami_id)
@@ -70,5 +79,15 @@ end
 
 def list_available_images
   out = `ec2-describe-images -F "name=gekko-*"`
-  out.scan(/IMAGE\s+(ami[-]\w+)\s+\w+[\/](gekko[-]\d{8}[-]\d{6})/).sort_by{|a,b| a[1] <=> b[1]}
+  list = out.scan(/IMAGE\s+(ami[-]\w+)\s+\w+[\/](gekko[-]\d{8}[-]\d{6})/).map{|x| x.reverse}.flatten
+  Hash[*list]
+end
+
+def check_launch_configuration(name)
+  out = `as-describe-launch-configs #{name} 2>&1`
+  if out !~ /LAUNCH[-]CONFIG\s+gekko-\d{8}-\d{8}/
+    true
+  else
+    false
+  end
 end
