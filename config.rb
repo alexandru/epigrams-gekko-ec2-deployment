@@ -40,11 +40,11 @@ module Gekko::Config
      :suffix => "critical-latency-levels",
      :alarm_action => :scale_up,
      :operator => "GreaterThanThreshold",
-     :evaluation_periods => 1,
+     :evaluation_periods => 3,
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 3 * 60, # 3 minutes
+     :period_secs => 60, # 1 minute * 3 periods
      :threshold => "0.5",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
@@ -52,11 +52,11 @@ module Gekko::Config
      :suffix => "really-high-latency-levels",
      :alarm_action => :scale_up,
      :operator => "GreaterThanThreshold",
-     :evaluation_periods => 1,
+     :evaluation_periods => 3,
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 3 * 60, # 3 minutes
+     :period_secs => 60, # 1 minute * 3 periods
      :threshold => "0.3",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
@@ -64,12 +64,12 @@ module Gekko::Config
      :suffix => "high-latency-levels",
      :ok_action => :scale_down,
      :operator => "GreaterThanThreshold",
-     :evaluation_periods => 1,
+     :evaluation_periods => 20,
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 20 * 60, # 20 minutes
-     :threshold => "0.10",
+     :period_secs => 60, # 1 minute (* 20 periods)
+     :threshold => "0.03",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]
