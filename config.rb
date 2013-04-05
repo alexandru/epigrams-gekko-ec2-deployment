@@ -12,7 +12,11 @@ module Gekko::Config
   # security group
   GROUP = "Gekko"
 
+  # DEFAULT_AMI = "ami-1ebb2077" # Ubuntu 12.04 LTS, AMD64
+  DEFAULT_AMI = "ami-1cbb2075" # Ubuntu 12.04 LTS, i386
+
   # the instances we work with
+  # INSTANCE_TYPE = "c1.xlarge"
   INSTANCE_TYPE = "c1.medium"
 
   AVAILABILITY_ZONES = ["us-east-1c"]
@@ -22,7 +26,7 @@ module Gekko::Config
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
-  SCALE_UP_COOLDOWN = 2 * 60 # 2 minutes  
+  SCALE_UP_COOLDOWN = 2 * 60 # 2 minutes
 
   # Number of instances to add on a scale down operation
   SCALE_DOWN_ADJUSTMENT = -1
@@ -41,6 +45,18 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 3 * 60, # 3 minutes
+     :threshold => "0.5",
+     :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
+    ),
+    OpenStruct.new(
+     :suffix => "really-high-latency-levels",
+     :alarm_action => :scale_up,
+     :operator => "GreaterThanThreshold",
+     :evaluation_periods => 1,
+     :namespace => "AWS/ELB",
+     :metric_name => "Latency",
+     :statistic => "Average",
+     :period_secs => 3 * 60, # 3 minutes
      :threshold => "0.3",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
@@ -52,8 +68,8 @@ module Gekko::Config
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 30 * 60, # 30 minutes
-     :threshold => "0.2",
+     :period_secs => 20 * 60, # 20 minutes
+     :threshold => "0.10",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]

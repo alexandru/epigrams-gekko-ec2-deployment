@@ -16,7 +16,7 @@ def get_keypairs
 end
 
 def create_instances(keypair, nr, tag_name, ami_id=nil)
-  ami_id ||= "ami-1cbb2075" # ubuntu 12.04 LTS
+  ami_id ||= Gekko::Config::DEFAULT_AMI # ubuntu 12.04 LTS
 
   ids = []
   (0...nr).each do |i|

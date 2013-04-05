@@ -1,4 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
-sudo chmod ugo+rwx /tmp/
+echo "[upstart] gekko initializing, sleeping for 30 secs ..."
+sleep 30
+
+if [ -f "/home/gekko/gekko-running/RUNNING_PID" ]; then
+  kill `cat /home/gekko/gekko-running/RUNNING_PID`
+  rm -f /home/gekko/gekko-running/RUNNING_PID
+fi
+
 exec sudo -u gekko -i /home/gekko/gekko-running/bin/server
