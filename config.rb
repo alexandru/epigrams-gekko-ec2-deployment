@@ -22,30 +22,30 @@ module Gekko::Config
   AVAILABILITY_ZONES = ["us-east-1c"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 1
+  SCALE_UP_ADJUSTMENT = 3
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
-  SCALE_UP_COOLDOWN = 2 * 60 # 2 minutes
+  SCALE_UP_COOLDOWN = 5 * 60 # 5 minutes
 
   # Number of instances to add on a scale down operation
   SCALE_DOWN_ADJUSTMENT = -1
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
-  SCALE_DOWN_COOLDOWN = 5 * 60 # 5 minutes  
+  SCALE_DOWN_COOLDOWN = 60 
 
   AUTO_SCALE_POLICY = [
     OpenStruct.new(
      :suffix => "critical-latency-levels",
      :alarm_action => :scale_up,
      :operator => "GreaterThanThreshold",
-     :evaluation_periods => 3,
+     :evaluation_periods => 1,
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 60, # 1 minute * 3 periods
-     :threshold => "0.3",
+     :period_secs => 10, # 10 secs
+     :threshold => "0.2",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
     OpenStruct.new(
@@ -56,20 +56,32 @@ module Gekko::Config
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 60, # 1 minute * 3 periods
+     :period_secs => 10, # 10 secs * 3 periods = 30 secs
      :threshold => "0.1",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
     OpenStruct.new(
      :suffix => "high-latency-levels",
-     :ok_action => :scale_down,
+     :alarm_action => :scale_up,
      :operator => "GreaterThanThreshold",
-     :evaluation_periods => 20,
+     :evaluation_periods => 3,
      :namespace => "AWS/ELB",
      :metric_name => "Latency",
      :statistic => "Average",
-     :period_secs => 60, # 1 minute (* 20 periods)
-     :threshold => "0.03",
+     :period_secs => 10, # 10 secs * 3 periods = 30 secs
+     :threshold => "0.05", 
+     :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
+    ),
+    OpenStruct.new(
+     :suffix => "moderate-latency-levels",
+     :ok_action => :scale_down,
+     :operator => "GreaterThanThreshold",
+     :evaluation_periods => 60,
+     :namespace => "AWS/ELB",
+     :metric_name => "Latency",
+     :statistic => "Average",
+     :period_secs => 30, # 30 secs * 60 periods = 30 minutes
+     :threshold => "0.01",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]

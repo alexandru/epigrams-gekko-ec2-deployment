@@ -6,7 +6,6 @@ ec2-create-image --region us-east-1 i-f1ea9793 --name gekko
 
 ec2-create-tags ami-e6b1d48f --tag Name=gekko
 
-
 elb-create-lb gekko --headers --listener "lb-port=80,instance-port=9000,protocol=http" --availability-zones us-east-1c
 
 elb-configure-healthcheck gekko --headers --target "HTTP:9000/ping" --interval 60 --timeout 3 --unhealthy-threshold 4 --healthy-threshold 2

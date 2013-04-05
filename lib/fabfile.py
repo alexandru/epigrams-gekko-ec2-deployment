@@ -9,6 +9,9 @@ def ping():
 def provision():
     project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+    # shutdown gekko, just in case it is already preset
+    run("sudo service gekko shutdown || echo 'Gekko is not present'")
+    
     # disable firewal
     run("sudo ufw disable")
 
