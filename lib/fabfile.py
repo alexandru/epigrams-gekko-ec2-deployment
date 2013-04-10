@@ -57,8 +57,6 @@ def provision():
 
     # for using the ephemeral /mnt
     put(os.path.join(project_dir, "config", "fstab"), "/etc/fstab", use_sudo=True)
-    put(os.path.join(project_dir, "config", "rc.local"), "/etc/rc.local", use_sudo=True)
-    run("sudo chmod +x /etc/rc.local")
 
     # for startup of the project on boot
     put(os.path.join(project_dir, "config", "gekko-upstart.conf"), "/etc/init/gekko.conf", use_sudo=True)

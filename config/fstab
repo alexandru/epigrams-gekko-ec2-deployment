@@ -2,6 +2,4 @@ LABEL=cloudimg-rootfs	/	 ext4	defaults	0 0
 /dev/xvda2	/mnt	auto	defaults,nobootwait,noatime,nodiratime,comment=cloudconfig	0	2
 /dev/xvda3	none	swap	sw,comment=cloudconfig	0	0
 
-/mnt/tmp	/tmp		none	bind,nobootwait		0	0
-/mnt/var/tmp	/var/tmp	none	bind,nobootwait		0	0
-/mnt/var/log	/var/log	none	bind,nobootwait		0	0
+

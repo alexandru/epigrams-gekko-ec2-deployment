@@ -1,0 +1,56 @@
+as-put-scaling-policy gekko-20130405-184433-scale-up \
+  --auto-scaling-group gekko-20130405-184433 \
+  --adjustment=4 \
+  --type ChangeInCapacity \
+  --cooldown 60 2>&1
+
+Created gekko-20130405-184433-scale-up scaling policy ID: arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:2cc1e3f6-cf50-43cd-9bfe-8c9fdb90d21d:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-up
+
+as-put-scaling-policy gekko-20130405-184433-scale-down \
+  --auto-scaling-group gekko-20130405-184433 \
+  --adjustment=-1 \
+  --type ChangeInCapacity \
+  --cooldown 60 2>&1
+
+Created gekko-20130405-184433-scale-down scaling policy ID: arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:fe77f4ed-b137-47e7-8fcd-09b5d6f12e9a:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-down
+
+#################
+alex@frunzaverde:~/Projects/magnolialabs/gekko-ec2-scripts$ as-put-scaling-policy gekko-20130405-184433-scale-up \
+>   --auto-scaling-group gekko-20130405-184433 \
+>   --adjustment=4 \
+>   --type ChangeInCapacity \
+>   --cooldown 60 2>&1
+arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:2cc1e3f6-cf50-43cd-9bfe-8c9fdb90d21d:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-up
+
+alex@frunzaverde:~/Projects/magnolialabs/gekko-ec2-scripts$ as-put-scaling-policy gekko-20130405-184433-scale-down \
+>   --auto-scaling-group gekko-20130405-184433 \
+>   --adjustment=-1 \
+>   --type ChangeInCapacity \
+>   --cooldown 60 2>&1
+arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:fe77f4ed-b137-47e7-8fcd-09b5d6f12e9a:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-down
+#################
+
+mon-put-metric-alarm gekko-20130405-184433-critical-latency-levels \
+  --comparison-operator GreaterThanThreshold \
+  --evaluation-periods 1 \
+  --metric-name Latency \
+  --namespace "AWS/ELB" \
+  --period "60" \
+  --statistic "Average" \
+  --threshold 0.1 \
+  --alarm-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:2cc1e3f6-cf50-43cd-9bfe-8c9fdb90d21d:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-up"  \
+  --dimensions "LoadBalancerName=gekko"
+OK-Created Alarm
+
+
+mon-put-metric-alarm gekko-20130405-184433-moderate-latency-levels \
+  --comparison-operator GreaterThanThreshold \
+  --evaluation-periods 1 \
+  --metric-name Latency \
+  --namespace "AWS/ELB" \
+  --period 3600 \
+  --statistic "Average" \
+  --threshold 0.005 \
+  --ok-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:fe77f4ed-b137-47e7-8fcd-09b5d6f12e9a:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-down" \
+  --dimensions "LoadBalancerName=gekko"
+OK-Created Alarm
