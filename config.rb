@@ -22,7 +22,7 @@ module Gekko::Config
   AVAILABILITY_ZONES = ["us-east-1c"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 4
+  SCALE_UP_ADJUSTMENT = 1
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
@@ -45,7 +45,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60, # 60 secs
-     :threshold => "0.1",
+     :threshold => "0.05",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
     OpenStruct.new(

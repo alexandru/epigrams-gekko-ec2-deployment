@@ -13,4 +13,4 @@ else
 end
 
 system('sbt ";compile;stage"')
-exec("rsync -rcv --cvs-exclude ./ ../gekko-running/")
+exec("rsync -rcv ./ ../gekko-running/")

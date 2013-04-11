@@ -38,8 +38,8 @@ def provision():
     run("sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections")
     run("sudo aptitude -y install oracle-java7-installer git typesafe-stack ruby1.9.3 htop iotop lsof sysstat")
     run("sudo update-java-alternatives -s java-7-oracle || echo 'OK'")
-    run("cd /tmp/ && rm -rf sbt-launch.jar && wget http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.12.2/sbt-launch.jar")
-    run("sudo mkdir -p /home/gekko/.sbt/.lib/0.12.2/ && sudo mv /tmp/sbt-launch.jar /home/gekko/.sbt/.lib/0.12.2/")
+    run("cd /tmp/ && rm -rf sbt-launch.jar && wget http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.12.3/sbt-launch.jar")
+    run("sudo mkdir -p /home/gekko/.sbt/.lib/0.12.3/ && sudo mv /tmp/sbt-launch.jar /home/gekko/.sbt/.lib/0.12.3/")
     run("sudo chown -R gekko:gekko /home/gekko/.sbt")
     run("sudo mkdir -p /home/gekko/bin")
 
