@@ -63,16 +63,19 @@ def wait_available_ami(ami_id)
     # pooling until ready
     out = `ec2-describe-images #{ami_id} --show-empty-fields 2>&1`
     lines = out.split(/\r?\n/)
+
     if !lines || lines.length == 0 || lines[0] !~ /IMAGE\s+/
-      raise Exception.new("ERROR when waiting for ami: " + out)
+      status = "unknown"
     else
       elems = lines[0].split(/\s+/)
-      if elems[4] != 'available'
-        puts "Waiting on AMI (#{ami_id}: #{elems[4]})"
-        sleep 3
-      else
-        break
-      end
+      status = elems[4]
+    end
+
+    if status != 'available'
+      puts "Waiting on AMI (#{ami_id}: #{elems[4]})"
+      sleep 5
+    else
+      break
     end
   end
 end

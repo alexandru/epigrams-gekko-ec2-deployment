@@ -1,8 +1,8 @@
-as-put-scaling-policy gekko-20130405-184433-scale-up \
-  --auto-scaling-group gekko-20130405-184433 \
-  --adjustment=4 \
+as-put-scaling-policy gekko-20130412-144703-scale-up \
+  --auto-scaling-group gekko-20130412-144703 \
+  --adjustment=1 \
   --type ChangeInCapacity \
-  --cooldown 60 2>&1
+  --cooldown 120 2>&1
 
 Created gekko-20130405-184433-scale-up scaling policy ID: arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:2cc1e3f6-cf50-43cd-9bfe-8c9fdb90d21d:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-up
 
@@ -30,27 +30,27 @@ alex@frunzaverde:~/Projects/magnolialabs/gekko-ec2-scripts$ as-put-scaling-polic
 arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:fe77f4ed-b137-47e7-8fcd-09b5d6f12e9a:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-down
 #################
 
-mon-put-metric-alarm gekko-20130405-184433-critical-latency-levels \
+mon-put-metric-alarm gekko-20130412-144703-critical-latency-levels \
   --comparison-operator GreaterThanThreshold \
   --evaluation-periods 1 \
   --metric-name Latency \
   --namespace "AWS/ELB" \
   --period "60" \
   --statistic "Average" \
-  --threshold 0.1 \
-  --alarm-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:2cc1e3f6-cf50-43cd-9bfe-8c9fdb90d21d:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-up"  \
+  --threshold 0.08 \
+  --alarm-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:15ef483a-2768-4f7f-a563-f2a58605b23d:autoScalingGroupName/gekko-20130412-144703:policyName/gekko-20130412-144703-scale-up" \
   --dimensions "LoadBalancerName=gekko"
 OK-Created Alarm
 
 
-mon-put-metric-alarm gekko-20130405-184433-moderate-latency-levels \
+mon-put-metric-alarm gekko-20130412-144703-moderate-latency-levels \
   --comparison-operator GreaterThanThreshold \
   --evaluation-periods 1 \
   --metric-name Latency \
   --namespace "AWS/ELB" \
   --period 3600 \
   --statistic "Average" \
-  --threshold 0.005 \
-  --ok-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:fe77f4ed-b137-47e7-8fcd-09b5d6f12e9a:autoScalingGroupName/gekko-20130405-184433:policyName/gekko-20130405-184433-scale-down" \
+  --threshold 0.01 \
+  --ok-actions "arn:aws:autoscaling:us-east-1:528726465792:scalingPolicy:e25dc72f-4288-46f9-bd7c-146da35f9457:autoScalingGroupName/gekko-20130412-144703:policyName/gekko-20130412-144703-scale-down" \
   --dimensions "LoadBalancerName=gekko"
 OK-Created Alarm

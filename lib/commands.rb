@@ -53,8 +53,10 @@ module Commands
          --min-size 0 \\
          --max-size 1 \\
          --desired-capacity 0 \\
+         --grace-period #{Gekko::Config::SCALE_GRACE_PERIOD} \\
+         --health-check-type ELB \\
          --load-balancers #{lb_name} \\
-         --tag  \"k=Name,v=#{snapshot},p=true\"
+         --tag \"k=Name,v=#{snapshot},p=true\"
     ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
 
     puts command
