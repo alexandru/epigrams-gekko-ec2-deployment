@@ -22,7 +22,7 @@ module Gekko::Config
   AVAILABILITY_ZONES = ["us-east-1c"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 3
+  SCALE_UP_ADJUSTMENT = 8
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
