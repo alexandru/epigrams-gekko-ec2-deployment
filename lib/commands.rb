@@ -42,6 +42,81 @@ module Commands
     end
   end
 
+  def self.update_deployed_snapshot(snapshot, min_size, max_size, desired_capacity)
+    command = "
+      as-update-auto-scaling-group #{snapshot} \\
+         --min-size #{min_size} \\
+         --max-size #{max_size} \\
+         --desired-capacity #{desired_capacity}
+    ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
+
+    puts command
+    result = system(command)
+
+    raise Exception.new("Something wrong happened") unless result
+
+    command = "
+      as-put-scaling-policy #{snapshot}-scale-up \\
+        --auto-scaling-group #{snapshot} \\
+        --adjustment=#{Gekko::Config::SCALE_UP_ADJUSTMENT} \\
+        --type ChangeInCapacity \\
+        --cooldown #{Gekko::Config::SCALE_UP_COOLDOWN} 2>&1
+    ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
+
+    puts command
+    scale_up_policy = `#{command}`.strip
+
+    raise Exception.new("ERROR: " + scale_up_policy) unless $?.exitstatus == 0
+    puts "\nCreated #{snapshot}-scale-up scaling policy ID: #{scale_up_policy}"
+    
+    command = "
+      as-put-scaling-policy #{snapshot}-scale-down \\
+        --auto-scaling-group #{snapshot} \\
+        --adjustment=#{Gekko::Config::SCALE_DOWN_ADJUSTMENT} \\
+        --type ChangeInCapacity \\
+        --cooldown #{Gekko::Config::SCALE_DOWN_COOLDOWN} 2>&1
+    ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
+
+    puts command
+    scale_down_policy = `#{command}`.strip
+
+    raise Exception.new("ERROR: " + scale_down_policy) unless $?.exitstatus == 0
+    puts "\nCreated #{snapshot}-scale-down scaling policy ID: #{scale_down_policy}"
+
+    Gekko::Config::AUTO_SCALE_POLICY.each do |m|
+      if m.ok_action
+        action_type = "ok"
+        action_value = m.ok_action
+      else
+        action_type = "alarm"
+        action_value = m.alarm_action
+      end
+
+      if action_value == :scale_down
+        action_value = scale_down_policy
+      else
+        action_value = scale_up_policy
+      end
+
+      command = "
+        mon-put-metric-alarm #{snapshot}-#{m.suffix} \\
+          --comparison-operator #{m.operator} \\
+          --evaluation-periods #{m.evaluation_periods} \\
+          --metric-name #{m.metric_name} \\
+          --namespace \"#{m.namespace}\" \\
+          --period \"#{m.period_secs}\" \\
+          --statistic \"#{m.statistic}\" \\
+          --threshold #{m.threshold} \\
+          --#{action_type}-actions \"#{action_value}\" \\
+          --dimensions \"#{m.dimensions}\"
+      ".split(/\r?\n/).map{|x| x[8..-1]}.join("\n")
+
+      puts "\n" + command
+      result = system(command)
+      raise Exception.new("Something wrong happened") unless result
+    end
+  end
+
   def self.deploy_snapshot(snapshot, min_size, max_size, desired_capacity)
     zones = Gekko::Config::AVAILABILITY_ZONES.join(",")
     lb_name = Gekko::Config::PRODUCTION_LB
@@ -53,8 +128,6 @@ module Commands
          --min-size 0 \\
          --max-size 1 \\
          --desired-capacity 0 \\
-         --grace-period #{Gekko::Config::SCALE_GRACE_PERIOD} \\
-         --health-check-type ELB \\
          --load-balancers #{lb_name} \\
          --tag \"k=Name,v=#{snapshot},p=true\"
     ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
@@ -92,7 +165,6 @@ module Commands
 
       raise Exception.new("ERROR: " + scale_down_policy) unless $?.exitstatus == 0
       puts "\nCreated #{snapshot}-scale-down scaling policy ID: #{scale_down_policy}"
-
 
       Gekko::Config::AUTO_SCALE_POLICY.each do |m|
         if m.ok_action

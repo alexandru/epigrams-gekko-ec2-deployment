@@ -48,6 +48,7 @@ def create_ami(instance_id, name_prefix)
   unless out =~ /IMAGE\s+(ami[-]\S+)/
     raise Exception.new("ERROR when creating ami: " + out)
   else
+    sleep 5
     ami_id = $1
     `ec2-create-tags #{ami_id} --tag Name=#{name}`
     [ami_id, name]
@@ -72,7 +73,7 @@ def wait_available_ami(ami_id)
     end
 
     if status != 'available'
-      puts "Waiting on AMI (#{ami_id}: #{elems[4]})"
+      puts "Waiting on AMI (#{ami_id}: #{status})"
       sleep 5
     else
       break
