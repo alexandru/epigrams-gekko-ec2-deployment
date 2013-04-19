@@ -1,6 +1,6 @@
 # Gekko Deployment on EC2
 
-## Installing the Scripts for Deployment
+## Installing the Scripts
 
 One needs to install these:
 
