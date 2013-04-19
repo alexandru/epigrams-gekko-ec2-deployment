@@ -1,4 +1,4 @@
-# Scripts for Deploying Gekko on EC2
+# Gekko Deployment on EC2
 
 ## Installing the Scripts for Deployment
 
