@@ -163,6 +163,33 @@ as-delete-auto-scaling-group gekko-20130418-162809 --force --force-delete
 
 That's it.
 
+## Reverting to an older version
+
+In case shit happens and a revert is needed, first pick the snapshot
+that is known to be working well. To list the available snapshots:
+
+```bash
+bin/list_snapshots.rb
+```
+
+Then deploy it on live:
+
+```bash
+bin/deploy_snapshot.rb -s gekko-20130419-144627 \
+  --min-size 8 \
+  --max-size 20 \
+  --desired-capacity 14
+```
+
+You can then destroy the bad snapshot's auto-scalling group (CAREFUL):
+
+```bash
+as-delete-auto-scaling-group gekko-20130418-124627 --force-delete --force
+```
+
+The snapshots remain there, the above only deletes the active
+auto-scaling group, so you can always revert.
+
 ## Further Development
 
 Under heavy load Linux networking needs to be tweaked. Some documents
