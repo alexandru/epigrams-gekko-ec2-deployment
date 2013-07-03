@@ -37,7 +37,8 @@ module Gekko::Config
 
   # The period after an instance is launched. During this period, any health
   # check failure of that instance is ignored.
-  SCALE_GRACE_PERIOD = 60 * 5
+  # See: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-add-elb-healthcheck.html
+  GRACE_PERIOD = 60 * 20
 
   AUTO_SCALE_POLICY = [
     OpenStruct.new(

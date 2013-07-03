@@ -47,7 +47,8 @@ module Commands
       as-update-auto-scaling-group #{snapshot} \\
          --min-size #{min_size} \\
          --max-size #{max_size} \\
-         --desired-capacity #{desired_capacity}
+         --desired-capacity #{desired_capacity} \\
+         --health-check-type EC2 
     ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
 
     puts command
@@ -129,6 +130,7 @@ module Commands
          --max-size 1 \\
          --desired-capacity 0 \\
          --load-balancers #{lb_name} \\
+         --health-check-type EC2 \\
          --tag \"k=Name,v=#{snapshot},p=true\"
     ".split(/\r?\n/).map{|x| x[6..-1]}.join("\n")
 
