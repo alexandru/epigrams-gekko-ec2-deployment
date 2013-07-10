@@ -4,4 +4,4 @@ sleep 15
 
 chmod ugo+rw /mnt
 
-exec sudo -u gekko -i /home/gekko/gekko-running/bin/server 1>>/mnt/gekko-application.log 2>&1
+exec sudo -u gekko -i /home/gekko/gekko-running/bin/server 1>>/mnt/gekko-application-stdout.log 2>&1
