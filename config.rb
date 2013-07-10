@@ -22,11 +22,11 @@ module Gekko::Config
   AVAILABILITY_ZONES = ["us-east-1c"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 4
+  SCALE_UP_ADJUSTMENT = 10
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
-  SCALE_UP_COOLDOWN = 10 * 60
+  SCALE_UP_COOLDOWN = 60 * 60 # 1 hour
 
   # Number of instances to add on a scale down operation
   SCALE_DOWN_ADJUSTMENT = -1
@@ -38,7 +38,7 @@ module Gekko::Config
   # The period after an instance is launched. During this period, any health
   # check failure of that instance is ignored.
   # See: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-add-elb-healthcheck.html
-  GRACE_PERIOD = 60 * 20
+  GRACE_PERIOD = 60 * 60 # 1 hour
 
   AUTO_SCALE_POLICY = [
     OpenStruct.new(
