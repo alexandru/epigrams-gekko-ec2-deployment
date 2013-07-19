@@ -9,11 +9,12 @@ One needs to install these:
 - [Amazon's Elastic Load Balancing Tools](http://aws.amazon.com/developertools/2536)
 - [Amazon's CloudWatch Tools](http://aws.amazon.com/developertools/2534)
 - [Amazon's Autoscaling Tools](http://aws.amazon.com/developertools/2535)
+- [Fabric](http://docs.fabfile.org/en/1.6/)
 
 Installation under Ubuntu:
 
 ```bash
-sudo aptitude install ruby1.9.1 ec2-api-tools elbcli moncli ascli
+sudo aptitude install ruby1.9.1 ec2-api-tools elbcli moncli ascli fabric
 ```
 
 You need access credentials (a pair of Access/Secret keys). For lack

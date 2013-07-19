@@ -23,7 +23,7 @@ module Commands
 
       fab_cmd = "fab -n 10 -u ubuntu -i #{identity} -H #{host} provision"
       puts "Provisioning instance ... #{fab_cmd}"
-      raise Exception.new("Something wrong happened") unless system(fab_cmd)
+      raise Exception.new("Something wrong happened (when running fab)") unless system(fab_cmd)
 
       puts "Create AMI ..."
 
@@ -55,7 +55,7 @@ module Commands
     puts command
     result = system(command)
 
-    raise Exception.new("Something wrong happened") unless result
+    raise Exception.new("Something wrong happened (updating auto-scaling group)") unless result
 
     command = "
       as-put-scaling-policy #{snapshot}-scale-up \\
@@ -115,7 +115,7 @@ module Commands
 
       puts "\n" + command
       result = system(command)
-      raise Exception.new("Something wrong happened") unless result
+      raise Exception.new("Something wrong happened (creating metric alarm)") unless result
     end
   end
 
@@ -139,7 +139,7 @@ module Commands
     puts command
     result = system(command)
 
-    raise Exception.new("Something wrong happened") unless result
+    raise Exception.new("Something wrong happened (creating auto-scaling group)") unless result
 
     begin
       command = "
@@ -200,7 +200,7 @@ module Commands
 
         puts "\n" + command
         result = system(command)
-        raise Exception.new("Something wrong happened") unless result
+        raise Exception.new("Something wrong happened (creating metric alarm)") unless result
       end
 
     rescue
@@ -213,7 +213,7 @@ module Commands
     else
       command = "as-update-auto-scaling-group #{snapshot} --min-size #{min_size} --max-size #{max_size} --desired-capacity #{desired_capacity}"
       puts "\n" + command
-      raise Exception.new("Something wrong happened") unless system(command)
+      raise Exception.new("Something wrong happened (updating auto-scaling group)") unless system(command)
     end
   end
 end
