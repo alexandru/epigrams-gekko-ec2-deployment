@@ -10,4 +10,4 @@ export GEKKO_MYSQL_USER="elf"
 export GEKKO_S3LOGGER_DIRECTORY="/mnt"
 export HOSTEDGRAPHITE_APIKEY="b7e306fc-d538-4e2f-9f7e-3878834904ce"
 
-export JAVA_OPTS="-Xms800m -Xmx1200m -XX:+UseConcMarkSweepGC -XX:NewRatio=1 -server"
+export JAVA_OPTS="-Xms800m -Xmx1200m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -server"
