@@ -1,7 +1,20 @@
 #!/bin/bash
 
-sleep 15
+sleep 20
 
 chmod ugo+rw /mnt
 
-exec sudo -u gekko -i /home/gekko/gekko-running/bin/server 1>>/mnt/gekko-application-stdout.log 2>&1
+if [ -f  /home/gekko/gekko-running/RUNNING_PID ]; then
+    cat /home/gekko/gekko-running/RUNNING_PID | xargs -Ipd kill pd 2>/dev/null
+    if [ $? -ne 0 ]; then
+	echo "Gekko was not running when attempted kill" >> /mnt/gekko-application-stdout.log
+    else
+	echo "Waiting for Gekko to stop" >> /mnt/gekko-application-stdout.log
+	sleep 10
+	cat /home/gekko/gekko-running/RUNNING_PID | xargs -Ipd kill -9 pd 2>/dev/null
+    fi
+
+    rm -f /home/gekko/gekko-running/RUNNING_PID
+fi
+
+exec sudo -u gekko -i /home/gekko/gekko-running/bin/server 1>>/mnt/gekko-application-stdout.log 2>>/mnt/gekko-application-errors.log
