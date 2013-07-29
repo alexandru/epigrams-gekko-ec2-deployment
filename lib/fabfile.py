@@ -36,7 +36,7 @@ def provision():
     run("sudo apt-add-repository -y ppa:webupd8team/java")
     run("sudo aptitude update && sudo aptitude -y upgrade")
     run("sudo echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections")
-    run("sudo aptitude -y install oracle-java7-installer git typesafe-stack ruby1.9.3 htop iotop lsof sysstat")
+    run("sudo aptitude -y install oracle-java7-installer git typesafe-stack ruby1.9.3 htop iotop lsof sysstat haproxy")
     run("sudo update-java-alternatives -s java-7-oracle || echo 'OK'")
     run("cd /tmp/ && rm -rf sbt-launch.jar && wget http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.12.3/sbt-launch.jar")
     run("sudo mkdir -p /home/gekko/.sbt/.lib/0.12.3/ && sudo mv /tmp/sbt-launch.jar /home/gekko/.sbt/.lib/0.12.3/")
@@ -53,6 +53,11 @@ def provision():
     put(os.path.join(project_dir, "config", "sysctl.conf"), "/etc/sysctl.conf", use_sudo=True)
     put(os.path.join(project_dir, "config", "common-session"), "/etc/pam.d/common-session", use_sudo=True)
     put(os.path.join(project_dir, "config", "common-session-noninteractive"), "/etc/pam.d/common-session-noninteractive", use_sudo=True)
+
+    # HAProxy
+    put(os.path.join(project_dir, "config", "haproxy-default"), "/etc/default/haproxy", use_sudo=True)
+    put(os.path.join(project_dir, "config", "haproxy.config"), "/etc/haproxy/haproxy.cfg", use_sudo=True)
+
     run("sudo -i sysctl -p")
 
     # for using the ephemeral /mnt
