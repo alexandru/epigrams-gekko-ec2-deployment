@@ -19,17 +19,17 @@ module Gekko::Config
   # INSTANCE_TYPE = "c1.xlarge"
   INSTANCE_TYPE = "c1.medium"
 
-  AVAILABILITY_ZONES = ["us-east-1c"]
+  AVAILABILITY_ZONES = ["us-east-1c", "us-east-1d", "us-east-1e"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 5
+  SCALE_UP_ADJUSTMENT = 12
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
   SCALE_UP_COOLDOWN = 60 * 10 # 10 minutes
 
   # Number of instances to add on a scale down operation
-  SCALE_DOWN_ADJUSTMENT = -1
+  SCALE_DOWN_ADJUSTMENT = -3
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
