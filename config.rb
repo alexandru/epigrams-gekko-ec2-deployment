@@ -19,17 +19,17 @@ module Gekko::Config
   # INSTANCE_TYPE = "c1.xlarge"
   INSTANCE_TYPE = "c1.medium"
 
-  AVAILABILITY_ZONES = ["us-east-1c", "us-east-1d", "us-east-1e"]
+  AVAILABILITY_ZONES = ["us-east-1c", "us-east-1e"]
 
   # Number of instances to add on a scale up operation
-  SCALE_UP_ADJUSTMENT = 12
+  SCALE_UP_ADJUSTMENT = 10
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
   SCALE_UP_COOLDOWN = 60 * 10 # 10 minutes
 
   # Number of instances to add on a scale down operation
-  SCALE_DOWN_ADJUSTMENT = -3
+  SCALE_DOWN_ADJUSTMENT = -2
   
   # Time (in seconds) between a successful Auto Scaling activity and
   # succeeding scaling activity.
@@ -38,7 +38,7 @@ module Gekko::Config
   # The period after an instance is launched. During this period, any health
   # check failure of that instance is ignored.
   # See: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-add-elb-healthcheck.html
-  GRACE_PERIOD = 60 * 60 * 2 # 2 hour
+  GRACE_PERIOD = 60 * 60 * 2 # 2 hours
 
   HEALTH_CHECK_TYPE = "ELB" # can be either ELB or EC2
 
@@ -52,7 +52,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60, # 60 secs
-     :threshold => "0.02",
+     :threshold => "0.05",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
     OpenStruct.new(
@@ -64,7 +64,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60 * 60, # 60 minutes
-     :threshold => "0.005",
+     :threshold => "0.01",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]
