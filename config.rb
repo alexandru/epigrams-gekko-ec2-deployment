@@ -40,7 +40,10 @@ module Gekko::Config
   # See: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-add-elb-healthcheck.html
   GRACE_PERIOD = 60 * 60 * 2 # 2 hours
 
-  HEALTH_CHECK_TYPE = "EC2" # can be either ELB or EC2
+  # Can be either ELB or EC2. If ELB, then when ELB declares the instance unhealthy
+  # then the instance is terminated by the auto-scalling group.
+  # WARN: use the ELB check type carefully, coupled with a long GRACE_PERIOD
+  HEALTH_CHECK_TYPE = "EC2" 
 
   AUTO_SCALE_POLICY = [
     OpenStruct.new(
@@ -64,7 +67,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60 * 60, # 60 minutes
-     :threshold => "0.006",
+     :threshold => "0.005",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]
