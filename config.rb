@@ -40,7 +40,7 @@ module Gekko::Config
   # See: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-add-elb-healthcheck.html
   GRACE_PERIOD = 60 * 60 * 2 # 2 hours
 
-  HEALTH_CHECK_TYPE = "ELB" # can be either ELB or EC2
+  HEALTH_CHECK_TYPE = "EC2" # can be either ELB or EC2
 
   AUTO_SCALE_POLICY = [
     OpenStruct.new(
