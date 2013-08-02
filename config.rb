@@ -52,7 +52,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60, # 60 secs
-     :threshold => "0.05",
+     :threshold => "0.03",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     ),
     OpenStruct.new(
@@ -64,7 +64,7 @@ module Gekko::Config
      :metric_name => "Latency",
      :statistic => "Average",
      :period_secs => 60 * 60, # 60 minutes
-     :threshold => "0.01",
+     :threshold => "0.006",
      :dimensions => "LoadBalancerName=#{PRODUCTION_LB}"
     )
   ]
